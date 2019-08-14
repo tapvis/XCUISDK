@@ -1,6 +1,6 @@
 # XCUISDK
 
-The XCUISDK is an SDK that sits on top of Apple's [XCTest Framework](https://developer.apple.com/documentation/xctest) to simplify the creation of [automated User Interface Tests](https://developer.apple.com/documentation/xctest/user_interface_tests) for iOS apps. The goal of XCUISDK is to give testers and developers a simple way to create automated UI tests that run on different devices and in different languages without the need to know all the details of the [XCUITest API](https://developer.apple.com/documentation/xctest/user_interface_tests). 
+The XCUISDK is an SDK that sits on top of Apple's [XCTest Framework](https://developer.apple.com/documentation/xctest) to simplify the creation of [automated User Interface Tests](https://developer.apple.com/documentation/xctest/user_interface_tests) for iOS apps. The goal of XCUISDK is to give testers and developers a simple way to create automated UI tests that run on different devices and in different languages without the need to know all the details of the [XCUITest API](https://developer.apple.com/documentation/xctest/user_interface_tests).
 
 XCUISDK is an essential part of [tapvis](https://tapvis.com). tapvis is an iOS UI automation tool that simplifies the creation of automated UI tests for iOS apps. [tapvis](https://tapvis.com) is a ***"Record & Generate" tool*** : testers and developers record a test right inside an iOS app. tapvis generates ready-to-run test code that links against this SDK.
 
@@ -30,7 +30,7 @@ XCUISDK is not working directly with an ```XCUIElement```. Instead it uses a wra
 struct UIElement {
     let name: String
     let candidateElements: [XCUIElement]
-    
+
     init(name: String, candidateElements: [XCUIElement]) {
         self.name = name
         self.candidateElements = candidateElements
@@ -47,18 +47,18 @@ private func _Skip_button() -> UIElement {
   	let elementById    = app.buttons["Skip_btn_intro"]		
     let elementByLabel = app.buttons["Skip"]
     let elementByPath  = app
-    										 .windows.element(boundBy: 0)
-										     .buttons.element(boundBy: 0)
-    return UIElement(name: "Skip_button", 
-        								 candidateElements: [elementById, elementByLabel, elementByPath])
+                         .windows.element(boundBy: 0)
+                         .buttons.element(boundBy: 0)
+    return UIElement(name: "Skip_button",
+                    candidateElements: [elementById, elementByLabel, elementByPath])
 }
 ```
 
-The app that is supposed to be tested contains a button that is used to skip a screen. This button can be referenced in three different ways: 
+The app that is supposed to be tested contains a button that is used to skip a screen. This button can be referenced in three different ways:
 
 1. by accessibility ID
 2. by accessibility label
-3. by a path through the UI. 
+3. by a path through the UI.
 
 The XCUISDK tries to find the button in this order. If the button cannot be found by ID, the label is tried. If it cannot be found by the label, the path is tried.
 
@@ -100,9 +100,8 @@ Make sure that the iOS Simulator is not connected to the hardware keyboard (the 
 
 # To Do
 
-The XCUISDK is far from being finished. We extend it constantly as [tapvis](https://tapvis.com) progresses in its development. 
+The XCUISDK is far from being finished. We extend it constantly as [tapvis](https://tapvis.com) progresses in its development.
 
-```
 - [x] Tap with automatic scroll to element
 - [x] Type text on keyboard
 - [x] Swipe in different directions with configurable distance
@@ -110,4 +109,3 @@ The XCUISDK is far from being finished. We extend it constantly as [tapvis](http
 - [ ] Interact with sliders
 - [ ] Carthage integration
 - [ ] Cocoapods integration
-```
