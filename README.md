@@ -38,7 +38,7 @@ struct UIElement {
 }
 ```
 
-You assign it a name (for better error reporting) and a array of ```candidate elements```. Candidate elements is an array of XCUIElements that are used to locate an element on screen. If an element cannot be found, the XCUISDK tries to find the other candidate elements until one is visible, or none is visible which leads to a failing test.
+You assign it a name (for better error reporting) and an array of ```candidate elements```. ```candidateElements``` is an array of XCUIElements that are used to locate an element on screen. If an element cannot be found, the XCUISDK tries to find the other candidate elements until one is visible, or none is visible, which leads to a failing test.
 
 See the following example of a function that returns an instance of ```UIElement```:
 
@@ -62,7 +62,7 @@ The app that is supposed to be tested contains a button that is used to skip a s
 
 The XCUISDK tries to find the button in this order. If the button cannot be found by ID, the label is tried. If it cannot be found by the label, the path is tried.
 
-If you use tapvis to record a test, tapvis will generate this function every UI element that you interact with during your test.
+If you use tapvis to record a test, tapvis will generate this function for every UI element that you interact with during your test.
 
 ### Tap
 
@@ -108,5 +108,6 @@ The XCUISDK is far from being finished. We extend it constantly as [tapvis](http
 - [x] Swipe in different directions with configurable distance
 - [ ] Interact with pickers
 - [ ] Interact with sliders
-- [ ] ...
+- [ ] Carthage integration
+- [ ] Cocoapods integration
 ```
