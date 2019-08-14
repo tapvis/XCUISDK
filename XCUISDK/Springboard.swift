@@ -9,7 +9,6 @@
 import XCTest
 
 class Springboard {
-    static let springboard = app()
     
     //MARK: Page Objects
     private static let deleteAppButton = DeleteAppButton()
@@ -17,32 +16,32 @@ class Springboard {
     
     //MARK: -
     
-    private class func app() -> XCUIApplication {
+    private class func springboard() -> XCUIApplication {
         return XCUIApplication(bundleIdentifier: "com.apple.springboard")
     }
     
-    class func terminateAndDeleteApp(_ app: XCUIApplication, withName appDisplayName: String) {
+    class func terminateAndDeleteApp(_ app: XCUIApplication = App(), withName appDisplayName: String) {
         app.terminate()
         
-        let icons = springboard.icons.matching(NSPredicate(format: "label == %@", appDisplayName))
+        let icons = springboard().icons.matching(NSPredicate(format: "label == %@", appDisplayName))
         for index in 0..<icons.count {
             let icon = icons.element(boundBy: index)
             if icon.exists && icon.isHittable {
                 // Force delete the app from the springboard
                 let iconFrame = icon.frame
-                let springboardFrame = springboard.frame
+                let springboardFrame = springboard().frame
                 icon.press(forDuration: 1.3)
                 
                 // Tap the little "X" button at approximately where it is. The X is not exposed directly
-                springboard.coordinate(withNormalizedOffset: CGVector(dx: (iconFrame.minX + 3) / springboardFrame.maxX, dy: (iconFrame.minY + 3) / springboardFrame.maxY)).tap()
+                springboard().coordinate(withNormalizedOffset: CGVector(dx: (iconFrame.minX + 3) / springboardFrame.maxX, dy: (iconFrame.minY + 3) / springboardFrame.maxY)).tap()
                 sleep(1)
-                if let deleteAppButton = deleteAppButton.locator.locate() {
+                if let deleteAppButton = deleteAppButton.locate(in: springboard()) {
                     deleteAppButton.tap()
                 }
                 
             }
         }
-        if let doneButton = doneButton.locator.locate() {
+        if let doneButton = doneButton.locate(in: springboard()) {
             if doneButton.waitForExistence(timeout: 1) {
                 doneButton.tap()
             }
@@ -53,32 +52,21 @@ class Springboard {
     
     //MARK: Page Object Definitions
     
-    private struct DeleteAppButton {
-        let locator: ButtonLocator
-        init() {
-            locator = ButtonLocator(labels: ["Delete", "Löschen"], app: app())
+    struct DeleteAppButton: UIElement {
+        var description: String {
+            return "DeleteAppButton"
+        }
+        var identity: UIElementIdentity {
+            return UIElementIdentity(type: .button, labels: ["Delete", "Löschen"])
         }
     }
     
-    private struct DoneButton {
-        let locator: ButtonLocator
-        init() {
-            locator = ButtonLocator(labels: ["Done", "Fertig"], app: app())
+    struct DoneButton: UIElement {
+        var description: String {
+            return "DeleteAppButton"
         }
-    }
-    
-    struct ButtonLocator {
-        let labels: [String]
-        let app: XCUIApplication
-        
-        func locate() -> XCUIElement? {
-            for label in labels {
-                let button = app.buttons[label]
-                if button.exists && button.isHittable {
-                    return button
-                }
-            }
-            return nil
+        var identity: UIElementIdentity {
+            return UIElementIdentity(type: .button, labels: ["Done", "Fertig"])
         }
     }
 }

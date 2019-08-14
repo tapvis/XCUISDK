@@ -12,10 +12,12 @@
 		B0B8CAC62302F2F100CA117E /* XCUISDK.h in Headers */ = {isa = PBXBuildFile; fileRef = B0B8CAB82302F2F100CA117E /* XCUISDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B0B8CAD42302F31500CA117E /* NavigationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CACF2302F31500CA117E /* NavigationStrategy.swift */; };
 		B0B8CAD52302F31500CA117E /* Springboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAD02302F31500CA117E /* Springboard.swift */; };
-		B0B8CAD62302F31500CA117E /* Keyplane.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAD12302F31500CA117E /* Keyplane.swift */; };
 		B0B8CAD72302F31500CA117E /* XCUIElement+Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAD22302F31500CA117E /* XCUIElement+Step.swift */; };
 		B0B8CAD82302F31500CA117E /* XCUIElement+Swipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAD32302F31500CA117E /* XCUIElement+Swipe.swift */; };
 		B0B8CADB2302F32700CA117E /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0B8CADA2302F32700CA117E /* XCTest.framework */; };
+		B0B8CAFC2304D00200CA117E /* UIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAF92304D00100CA117E /* UIElement.swift */; };
+		B0B8CAFD2304D00200CA117E /* XCUIElement+TypeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAFA2304D00100CA117E /* XCUIElement+TypeText.swift */; };
+		B0B8CAFE2304D00200CA117E /* Screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAFB2304D00200CA117E /* Screenshot.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +43,9 @@
 		B0B8CAD22302F31500CA117E /* XCUIElement+Step.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Step.swift"; sourceTree = "<group>"; };
 		B0B8CAD32302F31500CA117E /* XCUIElement+Swipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Swipe.swift"; sourceTree = "<group>"; };
 		B0B8CADA2302F32700CA117E /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		B0B8CAF92304D00100CA117E /* UIElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIElement.swift; sourceTree = "<group>"; };
+		B0B8CAFA2304D00100CA117E /* XCUIElement+TypeText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCUIElement+TypeText.swift"; sourceTree = "<group>"; };
+		B0B8CAFB2304D00200CA117E /* Screenshot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Screenshot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +90,9 @@
 		B0B8CAB72302F2F100CA117E /* XCUISDK */ = {
 			isa = PBXGroup;
 			children = (
+				B0B8CAFB2304D00200CA117E /* Screenshot.swift */,
+				B0B8CAF92304D00100CA117E /* UIElement.swift */,
+				B0B8CAFA2304D00100CA117E /* XCUIElement+TypeText.swift */,
 				B0B8CAB82302F2F100CA117E /* XCUISDK.h */,
 				B0B8CAD12302F31500CA117E /* Keyplane.swift */,
 				B0B8CACF2302F31500CA117E /* NavigationStrategy.swift */,
@@ -222,11 +230,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B0B8CAD62302F31500CA117E /* Keyplane.swift in Sources */,
+				B0B8CAFE2304D00200CA117E /* Screenshot.swift in Sources */,
 				B0B8CAD42302F31500CA117E /* NavigationStrategy.swift in Sources */,
 				B0B8CAD82302F31500CA117E /* XCUIElement+Swipe.swift in Sources */,
 				B0B8CAD52302F31500CA117E /* Springboard.swift in Sources */,
+				B0B8CAFC2304D00200CA117E /* UIElement.swift in Sources */,
 				B0B8CAD72302F31500CA117E /* XCUIElement+Step.swift in Sources */,
+				B0B8CAFD2304D00200CA117E /* XCUIElement+TypeText.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

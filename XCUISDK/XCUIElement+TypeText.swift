@@ -9,10 +9,33 @@
 import Foundation
 import XCTest
 
+func Type(_ text: String, in textField: UIElement, in app: XCUIApplication = App(), tap returnKeyLabel: String? = nil, asserts: Asserts? = nil) {
+    performStep("type text \"\(text)\" in \(textField.description)",
+        in: app,
+        on: textField,
+        switchToNewState: { element in
+            let keyboard = app.keyboards.element(boundBy: 0)
+            guard keyboard.exists else {
+                XCTFail("""
+                    Cannot type \(text) because there is no keyboard visible on screen.
+                    Check the Simulator's keyboard options in menu:
+                    Hardware -> Keyboard
+                    """)
+                return
+            }
+            text.type(in: app)
+            if let label = returnKeyLabel {
+                keyboard.buttons[label].tap()
+            }
+    }) {
+        asserts?()
+    }
+}
+
 extension String {
     func type(in app: XCUIApplication) {
         let keyboard = app.keyboards.element(boundBy: 0)
-        guard keyboard.exists else {
+        guard keyboard.exists && keyboard.isHittable else {
             XCTFail("""
                     Cannot type \(self) because there is no keyboard visible on screen?
                     Check the Simulator's keyboard options in menu:

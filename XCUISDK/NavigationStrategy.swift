@@ -30,10 +30,6 @@ extension NavigationStrategy {
     func canBeApplied() -> Bool {
         return true
     }
-    
-    func window(for app: XCUIApplication) -> UIElement {
-        return UIElement(name: "app window", candidateElements: [app.windows.firstMatch])
-    }
 }
 
 //MARK: -
@@ -49,10 +45,10 @@ struct CautiosSwiping: NavigationStrategy {
     
     func apply(uiElementInteraction: () -> NavigationCommand) {
         for _ in 0..<5 {
-            Swipe(.up, .aBit, on: window(for: app), in: app)
+            Swipe(.up, .aBit, on: AppWindow())
             let command = uiElementInteraction()
             switch command {
-            case .stop: return
+            case .stop: break
             case .continue: continue
             }
         }
@@ -61,6 +57,13 @@ struct CautiosSwiping: NavigationStrategy {
 
 struct NoNavigation: NavigationStrategy {
     func apply(uiElementInteraction: () -> NavigationCommand) {
+        _ = uiElementInteraction()
+    }
+}
+
+struct Wait: NavigationStrategy {
+    func apply(uiElementInteraction: () -> NavigationCommand) {
+        sleep(2)
         _ = uiElementInteraction()
     }
 }

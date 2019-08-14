@@ -24,6 +24,17 @@ enum SwipeDistance: String {
     }
 }
 
+func Swipe(_ direction: SwipeDirection, _ distance: SwipeDistance, on element: UIElement, in app: XCUIApplication = App(), asserts: Asserts? = nil) {
+    performStep("swipe \(direction.rawValue) \(distance.rawValue) on \(element.description)",
+        in: app,
+        on: element,
+        switchToNewState: { element in
+            element.swipe(direction, distance)
+    }) {
+        asserts?()
+    }
+}
+
 extension XCUIElement {
     func swipe(_ direction: SwipeDirection, _ distance: SwipeDistance) {
         let pressDuration: TimeInterval = 0.05
