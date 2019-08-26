@@ -34,23 +34,73 @@ extension NavigationStrategy {
 
 //MARK: -
 
-struct CautiosSwiping: NavigationStrategy {
-    private let app: XCUIApplication
+struct Swiping: NavigationStrategy {
+    private let container: UIElement
+    
+    /// just storing this for performance reasons
+    /// because it is costly to call container.locate()
+    private let containerElement: XCUIElement?
     private let direction: SwipeDirection
+    private let distance: SwipeDistance
+    private let times: Int
    
-    init(_ direction: SwipeDirection, in app: XCUIApplication, inContextOf context: XCUIElement?) {
+    init(_ direction: SwipeDirection, _ distance: SwipeDistance, times: Int = 3, in container: UIElement, inContextOf context: XCUIElement?) {
         self.direction = direction
-        self.app = app
+        self.container = container
+        self.containerElement = container.locate(in: App())
+        self.times = times
+        self.distance = distance
     }
     
     func apply(uiElementInteraction: () -> NavigationCommand) {
-        for _ in 0..<5 {
-            Swipe(.up, .aBit, on: AppWindow())
+        var timesSwiped = 0
+        while shouldStop() == false,  timesSwiped < times {
+            Swipe(direction, distance, on: container)
+            timesSwiped = timesSwiped + 1
             let command = uiElementInteraction()
             switch command {
-            case .stop: break
+            case .stop: return
             case .continue: continue
             }
+        }
+    }
+    
+    private func shouldStop() -> Bool {
+        switch direction {
+        case .up:    return isAtBottomOf(container)
+        case .down:  return isAtTopOf(container)
+        case .left:  return isAtBottomOf(container)
+        case .right: return isAtTopOf(container)
+        }
+    }
+    
+    private func isAtBottomOf(_ container: UIElement) -> Bool {
+        guard let containerElement = self.containerElement else {
+            return false
+        }
+        switch containerElement.elementType {
+        case .table, .collectionView:
+            if let lastCell = containerElement.cells.allElementsBoundByIndex.last {
+                return lastCell.exists && lastCell.isHittable
+            } else {
+                return false
+            }
+        default: return false
+        }
+    }
+    
+    private func isAtTopOf(_ container: UIElement) -> Bool {
+        guard let containerElement = container.locate(in: App()) else {
+            return false
+        }
+        switch containerElement.elementType {
+        case .table, .collectionView:
+            if let lastCell = containerElement.cells.allElementsBoundByIndex.first {
+                return lastCell.exists && lastCell.isHittable
+            } else {
+                return false
+            }
+        default: return false
         }
     }
 }

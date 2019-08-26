@@ -56,8 +56,8 @@ class Springboard {
         var description: String {
             return "DeleteAppButton"
         }
-        var identity: UIElementIdentity {
-            return UIElementIdentity(type: .button, labels: ["Delete", "Löschen"])
+        var identity: Identity {
+            return Identity(.button, labels: ["Delete", "Löschen"])
         }
     }
     
@@ -65,8 +65,8 @@ class Springboard {
         var description: String {
             return "DeleteAppButton"
         }
-        var identity: UIElementIdentity {
-            return UIElementIdentity(type: .button, labels: ["Done", "Fertig"])
+        var identity: Identity {
+            return Identity(.button, labels: ["Done", "Fertig"])
         }
     }
 }

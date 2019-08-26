@@ -9,14 +9,20 @@
 import Foundation
 import XCTest
 
+enum ScrollAxis {
+    case horizontal, vertical
+}
+
 protocol UIElement {
     var description: String { get }
-    var identity: UIElementIdentity { get }
+    var identity: Identity { get }
+    var scrollContainer: UIElement { get }
+    var scrollAxis: ScrollAxis { get }
 }
 
 /// This struct can be used to desribe the
 /// identity of an UI element
-struct UIElementIdentity {
+struct Identity {
     
     let type: XCUIElement.ElementType
     
@@ -45,7 +51,7 @@ struct UIElementIdentity {
     /// and because of a bug in the app under test.
     let path: Path?
     
-    init(type: XCUIElement.ElementType, id: String? = nil, labels: [String]? = nil, path: Path? = nil) {
+    init(_ type: XCUIElement.ElementType, id: String? = nil, labels: [String]? = nil, path: Path? = nil) {
         self.type = type
         self.id = id
         self.labels = labels
@@ -70,6 +76,14 @@ struct UIElementIdentity {
 let kWaitForElementExistenceTimeoutSec: TimeInterval = 0
 
 extension UIElement {
+    
+    var scrollContainer: UIElement {
+        return AppWindow()
+    }
+    
+    var scrollAxis: ScrollAxis {
+        return  .vertical
+    }
     
     /// Tries to locate the UIElement on screen.
     ///
@@ -160,5 +174,46 @@ extension UIElement {
             return nil
         }
         return element
+    }
+}
+
+
+struct AppWindow: UIElement {
+    var description: String {
+        return "The app's main window"
+    }
+    var identity: Identity {
+        return Identity(.window,
+                        path: Identity.Path(query: App().windows, index: 0))
+    }
+}
+
+typealias T = Text
+
+struct Text: UIElement {
+    internal let labels: [String]
+    internal let scrollContainer: UIElement
+    internal let scrollAxis: ScrollAxis
+    internal let id: String?
+    internal let path: Identity.Path?
+    
+    init(id: String? = nil,
+         _ labels: [String],
+        path: Identity.Path? = nil,
+        scrollContainer: UIElement = AppWindow(),
+        scrollAxis: ScrollAxis = .vertical)
+    {
+        self.id = id
+        self.labels = labels
+        self.path = path
+        self.scrollContainer = scrollContainer
+        self.scrollAxis = scrollAxis
+    }
+    
+    var description: String {
+        return "\(labels)"
+    }
+    var identity: Identity {
+        return Identity(.staticText, labels: labels)
     }
 }

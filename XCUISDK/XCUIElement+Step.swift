@@ -18,19 +18,30 @@ func App() -> XCUIApplication {
     return XCUIApplication(bundleIdentifier: AppId)
 }
 
-struct AppWindow: UIElement {
-    var description: String {
-        return "The app's main window"
-    }
-    var identity: UIElementIdentity {
-        return UIElementIdentity(type: .window,
-                               path: UIElementIdentity.Path(query: App().windows, index: 0))
-    }
-}
-
 typealias Asserts = ()->()
 
 // MARK: - Interactions
+
+func TapOnCellText(_ text: Text,
+                    in app: XCUIApplication = App(),
+                    asserts: (Asserts)? = nil) {
+    
+    performStep("Search for cell with text '\(text.description)' in \(text.scrollContainer.description)",
+        in: app,
+        on: text.scrollContainer,
+        switchToNewState: { scrollContainer in
+            performStep("tap on '\(text.description)' in \(scrollContainer.description)",
+                in: app,
+                on: text,
+                switchToNewState: { text in
+                    text.tap(withNumberOfTaps: 1, numberOfTouches: 1)
+            }) {
+                asserts?()
+            }
+    }) {
+        asserts?()
+    }
+}
 
 func Tap(taps: Int = 1, touches: Int = 1, on element: UIElement, in app: XCUIApplication = App(), asserts: (Asserts)? = nil) {
     performStep("tap on \(element.description)",
@@ -96,11 +107,15 @@ func performAssert(_ description: String, in app: XCUIApplication, on element: U
 private func search(for element: UIElement, in app: XCUIApplication, andDo uiElementInteraction: (XCUIElement)->()) -> Bool {
     
     //TODO: make navigation strategy dependent on context (e.g. in tableView or pageControl)
+    
+    
+    
     var searchNavigations: [NavigationStrategy] = [
         NoNavigation(),
-        Wait(),
-        CautiosSwiping(.up, in: app, inContextOf: nil)
+        Wait()
     ]
+    searchNavigations.append(contentsOf: swipeNavigations(for: element))
+    
     var uiElementInteractionExecuted = false
     
     while let nav = searchNavigations.first, uiElementInteractionExecuted == false, nav.canBeApplied() {
@@ -118,4 +133,13 @@ private func search(for element: UIElement, in app: XCUIApplication, andDo uiEle
         }
     }
     return uiElementInteractionExecuted
+}
+
+private func swipeNavigations(for element: UIElement) -> [NavigationStrategy] {
+    switch element.scrollAxis {
+    case .vertical: return [Swiping(.up, .aBit, times: 5, in: element.scrollContainer, inContextOf: nil),
+                            Swiping(.down, .aBit, times: 10, in: element.scrollContainer, inContextOf: nil)]
+    case .horizontal: return [Swiping(.left, .aBit, times: 5, in: element.scrollContainer, inContextOf: nil),
+                              Swiping(.right, .aBit, times: 10, in: element.scrollContainer, inContextOf: nil)]
+    }
 }
