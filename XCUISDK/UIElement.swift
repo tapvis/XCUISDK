@@ -214,6 +214,6 @@ struct Text: UIElement {
         return "\(labels)"
     }
     var identity: Identity {
-        return Identity(.staticText, labels: labels)
+        return Identity(.staticText, id: id, labels: labels, path: path)
     }
 }
