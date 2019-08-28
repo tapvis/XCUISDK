@@ -82,7 +82,7 @@ extension UIElement {
     }
     
     var scrollAxis: ScrollAxis {
-        return  .vertical
+        return .vertical
     }
     
     /// Tries to locate the UIElement on screen.

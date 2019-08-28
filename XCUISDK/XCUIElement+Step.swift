@@ -22,7 +22,7 @@ typealias Asserts = ()->()
 
 // MARK: - Interactions
 
-func TapOnCellText(_ text: Text,
+func TapOnCellText(_ text: UIElement,
                     in app: XCUIApplication = App(),
                     asserts: (Asserts)? = nil) {
     
