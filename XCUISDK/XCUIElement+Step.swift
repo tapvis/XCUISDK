@@ -143,3 +143,22 @@ private func swipeNavigations(for element: UIElement) -> [NavigationStrategy] {
                               Swiping(.right, .aBit, times: 10, in: element.scrollContainer, inContextOf: nil)]
     }
 }
+
+extension XCUIElementQuery {
+    /// Returns a query for all descendants of type `XCUIElement.ElementType.staticText`
+    /// whose label matches any label in `labels`
+    ///
+    /// This method is useful if you want to refer to a cell by one of its contained
+    /// labels.
+    ///
+    /// - Parameter labels: the labels to check for
+    func labeled(with labels: [String]) -> XCUIElementQuery? {
+        let query = self.containing(NSPredicate(format: "elementType = %d AND label in %@",
+                                    XCUIElement.ElementType.staticText.rawValue,
+                                    labels))
+        if query.count > 0 {
+            return query
+        }
+        return nil
+    }
+}

@@ -61,10 +61,13 @@ struct Identity {
     //MARK: -
     
     struct Path {
-        let query: XCUIElementQuery
+        let query: XCUIElementQuery?
         let index: Int
         
         func resolve() -> XCUIElement? {
+            guard let query = query else {
+                return nil
+            }
             if index >= 0 && index < query.count {
                 return query.element(boundBy: index)
             }
