@@ -26,6 +26,14 @@ class Springboard {
         let icons = springboard().icons.matching(NSPredicate(format: "label == %@", appDisplayName))
         for index in 0..<icons.count {
             let icon = icons.element(boundBy: index)
+            
+            if !(icon.exists && icon.isHittable) {
+                search(icon, direction: .left, maxSwipes: 5)
+            }
+            if !(icon.exists && icon.isHittable) {
+                search(icon, direction: .right, maxSwipes: 10)
+            }
+            
             if icon.exists && icon.isHittable {
                 // Force delete the app from the springboard
                 let iconFrame = icon.frame
@@ -38,7 +46,6 @@ class Springboard {
                 if let deleteAppButton = deleteAppButton.locate(in: springboard()) {
                     deleteAppButton.tap()
                 }
-                
             }
         }
         if let doneButton = doneButton.locate(in: springboard()) {
@@ -47,6 +54,17 @@ class Springboard {
             }
         } else {
             XCUIDevice.shared.press(.home)
+        }
+    }
+    
+    private class func search(_ element: XCUIElement, direction: SwipeDirection, maxSwipes: Int = 5) {
+        var nrOfSwipes = 0
+        while nrOfSwipes < maxSwipes && !(element.exists && element.isHittable) {
+            switch direction {
+            case .left: springboard().windows.element(boundBy: 0).swipeLeft()
+            default: springboard().windows.element(boundBy: 0).swipeRight()
+            }
+            nrOfSwipes = nrOfSwipes + 1
         }
     }
     
@@ -63,7 +81,7 @@ class Springboard {
     
     struct DoneButton: UIElement {
         var description: String {
-            return "DeleteAppButton"
+            return "DoneAppButton"
         }
         var identity: Identity {
             return Identity(.button, labels: ["Done", "Fertig"])
