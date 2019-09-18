@@ -18,6 +18,7 @@ protocol UIElement {
     var identity: Identity { get }
     var scrollContainer: UIElement { get }
     var scrollAxis: ScrollAxis { get }
+    var relativeOrigin: CGPoint? { get }
 }
 
 /// This struct can be used to desribe the
@@ -88,12 +89,17 @@ extension UIElement {
         return .vertical
     }
     
+    var relativeOrigin: CGPoint? {
+        return nil
+    }
+    
     /// Tries to locate the UIElement on screen.
     ///
     /// Tries to locate an element with the following strategy:
-    /// 1. search for an XCUIElement with the elements accessibility Id
-    /// 2. search for an XCUIElement with the elements accessibility label
-    /// 3. search for an XCUIElement with the elements path through the UI
+    /// 1. search with the element's accessibility Id
+    /// 2. search with the element's accessibility label
+    /// 3. search with the element's origin
+    /// 4. search for an XCUIElement with the elements path through the UI
     ///
     /// If an XCUIElement can be located, it is checked if it is visible.
     /// If it is not visible, nil is returned.
@@ -108,8 +114,57 @@ extension UIElement {
             return element
         }
         
-        //3. try to locate the element by its path
+        //2. try to locate the element by its origin
+        if let element = elementByOrigin(in: app) {
+            return element
+        }
+        
+        //4. try to locate the element by its path
         return elementByPath(in: app)
+    }
+    
+    /// This method searches for a matching element by using the relativeOrigin.
+    /// The origin of a match must be within a range of +/- 25% of the relativeOrigin.
+    /// These 25% is a heuristic which we found to work in a lot of cases.
+    /// We call these 25% the 'tolerance range'.
+    private func elementByOrigin(in app: XCUIApplication) -> XCUIElement? {
+        guard let relativeOrigin = self.relativeOrigin else {
+            return nil
+        }
+        let xMin = max(relativeOrigin.x - (relativeOrigin.x * 0.25), 0)
+        let xMax = min(relativeOrigin.x + (relativeOrigin.x * 0.25), 1.0)
+        let yMin = max(relativeOrigin.y - (relativeOrigin.x * 0.25), 0)
+        let yMax = min(relativeOrigin.y + (relativeOrigin.x * 0.25), 1.0)
+        
+        let elementsWithOriginInRange = app.descendants(matching: self.identity.type)
+                                    .matching(NSPredicate(block: { (obj, bindings) -> Bool in
+                                        guard let element = obj as? XCUIElementAttributes else {
+                                            return false
+                                        }
+                                        let relativeX = element.frame.origin.x / app.frame.width
+                                        let relativeY = element.frame.origin.y / app.frame.height
+                                        return relativeX >= xMin && relativeX <= xMax &&
+                                               relativeY >= yMin && relativeY <= yMax
+                                    }))
+        if elementsWithOriginInRange.count > 0 {
+            if elementsWithOriginInRange.count > 1 {
+                print("""
+                    🚨 found multiple elements with type \(identity.type) and origin within tolerance range.
+                    Returning the first one.
+                    """)
+            }
+            let element = elementsWithOriginInRange.element(boundBy: 0)
+            _ = element.waitForExistence(timeout: kWaitForElementExistenceTimeoutSec)
+            if element.exists && element.isHittable {
+                return element
+            }
+            
+            print("""
+                🚨 found an element with type \(identity.type) and origin in tolerance range. But it's not visible.
+                """)
+            return nil
+        }
+        return nil
     }
     
     private func elementById(in app: XCUIApplication) -> XCUIElement? {
