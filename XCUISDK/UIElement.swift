@@ -52,6 +52,13 @@ struct Identity {
     /// and because of a bug in the app under test.
     let path: Path?
     
+    init(_ type: XCUIElement.ElementType, at index: Int) {
+        self.type   = type
+        self.path   = Identity.Path(query: App().descendants(matching: type), index: index)
+        self.id     = nil
+        self.labels = nil
+    }
+    
     init(_ type: XCUIElement.ElementType, id: String? = nil, labels: [String]? = nil, path: Path? = nil) {
         self.type = type
         self.id = id
@@ -81,6 +88,10 @@ let kWaitForElementExistenceTimeoutSec: TimeInterval = 0
 
 extension UIElement {
     
+    var description: String {
+        return String(describing: type(of: self))
+    }
+    
     var scrollContainer: UIElement {
         return AppWindow()
     }
@@ -103,7 +114,7 @@ extension UIElement {
     ///
     /// If an XCUIElement can be located, it is checked if it is visible.
     /// If it is not visible, nil is returned.
-    func locate(in app: XCUIApplication) -> XCUIElement? {
+    func locate(in app: XCUIApplication = App()) -> XCUIElement? {
         //1. try to locate the element by id
         if let element = elementById(in: app) {
             return element
@@ -114,13 +125,18 @@ extension UIElement {
             return element
         }
         
-        //2. try to locate the element by its origin
-        if let element = elementByOrigin(in: app) {
-            return element
+        if self.scrollContainer.identity.type != .window {
+            if let element = elementByPath(in: app) {
+                return element
+            }
+//            return elementByOrigin(in: app)
+            return nil
+        } else {
+            if let element = elementByOrigin(in: app) {
+                return element
+            }
+            return elementByPath(in: app)
         }
-        
-        //4. try to locate the element by its path
-        return elementByPath(in: app)
     }
     
     /// This method searches for a matching element by using the relativeOrigin.
@@ -131,21 +147,23 @@ extension UIElement {
         guard let relativeOrigin = self.relativeOrigin else {
             return nil
         }
-        let xMin = max(relativeOrigin.x - (relativeOrigin.x * 0.25), 0)
-        let xMax = min(relativeOrigin.x + (relativeOrigin.x * 0.25), 1.0)
-        let yMin = max(relativeOrigin.y - (relativeOrigin.x * 0.25), 0)
-        let yMax = min(relativeOrigin.y + (relativeOrigin.x * 0.25), 1.0)
+        let toleranceRange = self.toleranceRange()
+        
+        let xMin = max(relativeOrigin.x - toleranceRange, 0)
+        let xMax = min(relativeOrigin.x + toleranceRange, 1.0)
+        let yMin = max(relativeOrigin.y - toleranceRange, 0)
+        let yMax = min(relativeOrigin.y + toleranceRange, 1.0)
         
         let elementsWithOriginInRange = app.descendants(matching: self.identity.type)
-                                    .matching(NSPredicate(block: { (obj, bindings) -> Bool in
-                                        guard let element = obj as? XCUIElementAttributes else {
-                                            return false
-                                        }
-                                        let relativeX = element.frame.origin.x / app.frame.width
-                                        let relativeY = element.frame.origin.y / app.frame.height
-                                        return relativeX >= xMin && relativeX <= xMax &&
-                                               relativeY >= yMin && relativeY <= yMax
-                                    }))
+            .matching(NSPredicate(block: { (obj, bindings) -> Bool in
+                guard let element = obj as? XCUIElementAttributes else {
+                    return false
+                }
+                let relativeX = element.frame.origin.x / app.frame.width
+                let relativeY = element.frame.origin.y / app.frame.height
+                return relativeX >= xMin && relativeX <= xMax &&
+                    relativeY >= yMin && relativeY <= yMax
+            }))
         if elementsWithOriginInRange.count > 0 {
             if elementsWithOriginInRange.count > 1 {
                 print("""
@@ -155,7 +173,7 @@ extension UIElement {
             }
             let element = elementsWithOriginInRange.element(boundBy: 0)
             _ = element.waitForExistence(timeout: kWaitForElementExistenceTimeoutSec)
-            if element.exists && element.isHittable {
+            if element.isVisible() {
                 return element
             }
             
@@ -167,13 +185,22 @@ extension UIElement {
         return nil
     }
     
+    private func toleranceRange() -> CGFloat {
+        switch XCUIDevice.currentDeviceModel() {
+        case .iPhone4_4s:       return 0.1
+        case .iPhone5_5c_5s_SE: return 0.1
+        case .iPhone6_6s_7_8:   return 0.05
+        default:                return 0.05
+        }
+    }
+    
     private func elementById(in app: XCUIApplication) -> XCUIElement? {
         guard let id = identity.id else {
             return nil
         }
         let elementsById = app
-                            .descendants(matching: identity.type)
-                            .matching(NSPredicate(format: "identifier == %@", id))
+            .descendants(matching: identity.type)
+            .matching(NSPredicate(format: "identifier == %@", id))
         if elementsById.count > 0 {
             if elementsById.count > 1 {
                 //TODO: can we put such logs in the testreport?
@@ -185,7 +212,7 @@ extension UIElement {
             
             let element = elementsById.element(boundBy: 0)
             _ = element.waitForExistence(timeout: kWaitForElementExistenceTimeoutSec)
-            if element.exists && element.isHittable {
+            if element.isVisible() {
                 return element
             }
             
@@ -202,9 +229,14 @@ extension UIElement {
             return nil
         }
         for label in labels {
-            let elementsByLabel = app
+            var elementsByLabel = app
                                     .descendants(matching: identity.type)
                                     .matching(NSPredicate(format: "label == %@", label))
+            if elementsByLabel.count == 0 {
+                elementsByLabel = app
+                                    .descendants(matching: identity.type)
+                                    .matching(NSPredicate(format: "label CONTAINS %@", label))
+            }
             if elementsByLabel.count > 0 {
                 if elementsByLabel.count > 1 {
                     //TODO: can we put such logs in the testreport?
@@ -215,7 +247,7 @@ extension UIElement {
                 }
                 let element = elementsByLabel.element(boundBy: 0)
                 _ = element.waitForExistence(timeout: kWaitForElementExistenceTimeoutSec)
-                if element.exists && element.isHittable {
+                if element.isVisible() {
                     return element
                 } else {
                     print("""
@@ -257,9 +289,9 @@ struct Text: UIElement {
     
     init(id: String? = nil,
          _ labels: [String],
-        path: Identity.Path? = nil,
-        scrollContainer: UIElement = AppWindow(),
-        scrollAxis: ScrollAxis = .vertical)
+         path: Identity.Path? = nil,
+         scrollContainer: UIElement = AppWindow(),
+         scrollAxis: ScrollAxis = .vertical)
     {
         self.id = id
         self.labels = labels

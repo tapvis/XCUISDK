@@ -18,6 +18,26 @@ func App() -> XCUIApplication {
     return XCUIApplication(bundleIdentifier: AppId)
 }
 
+struct Button: UIElement {
+    private let labels: [String]
+    init(_ _labels: [String]) {
+        self.labels = _labels
+    }
+    var identity: Identity {
+        return Identity(.button, labels: labels)
+    }
+}
+
+struct Cell: UIElement {
+    private let labels: [String]
+    init(_ _labels: [String]) {
+        self.labels = _labels
+    }
+    var identity: Identity {
+        return Identity(.cell, path: Identity.Path(query: App().cells.labeled(with: labels), index: 0))
+    }
+}
+
 typealias Asserts = ()->()
 
 // MARK: - Interactions
@@ -153,12 +173,78 @@ extension XCUIElementQuery {
     ///
     /// - Parameter labels: the labels to check for
     func labeled(with labels: [String]) -> XCUIElementQuery? {
-        let query = self.containing(NSPredicate(format: "elementType = %d AND label in %@",
+        var query = self.containing(NSPredicate(format: "elementType = %d AND label in %@",
                                     XCUIElement.ElementType.staticText.rawValue,
                                     labels))
+        if query.count == 0 {
+            // relax the query and search for any descendant with a label but not
+            // restricted to static texts
+            query = self.containing(NSPredicate(format: "label in %@", labels))
+        }
+        if query.count == 0 {
+            //relax the query even more by checking if a label is contained
+            var found = false
+            var labelsIterator = labels.makeIterator()
+            var label: String? = labelsIterator.next()
+            while !found, label != nil {
+                query = self.containing(NSPredicate(format: "label CONTAINS %@", label!))
+                if query.count > 0 {
+                    found = true
+                } else {
+                    label = labelsIterator.next()
+                }
+            }
+        }
         if query.count > 0 {
             return query
         }
         return nil
+    }
+}
+
+extension XCUIElement {
+    func isVisible() -> Bool {
+        return exists && isHittable
+    }
+}
+
+extension Int {
+    func times(_ f: () -> ()) {
+        for _ in 0..<self {
+            f()
+        }
+    }
+    func times(f: @autoclosure () -> ()) {
+        for _ in 0..<self {
+            f()
+        }
+    }
+}
+
+extension XCUIDevice {
+    
+    enum Model: CaseIterable {
+        case iPhone4_4s
+        case iPhone5_5c_5s_SE
+        case iPhone6_6s_7_8
+        case iPhonePlus6_6s_7_8
+        case iPhoneX_Xs
+        case iPhone_Xr_XsMax
+    }
+    
+    static func currentDeviceModel() -> Model {
+        let width = Int(App().frame.width)
+        switch width {
+        case 480: return .iPhone4_4s
+        case 568: return .iPhone5_5c_5s_SE
+        case 667: return .iPhone6_6s_7_8
+        case 736: return .iPhonePlus6_6s_7_8
+        case 812: return .iPhoneX_Xs
+        case 896: return .iPhone_Xr_XsMax
+        default:
+            let message = "Running tests on an supported devices. Supported are \(Model.allCases)"
+            XCTFail(message)
+            fatalError(message)
+        }
     }
 }

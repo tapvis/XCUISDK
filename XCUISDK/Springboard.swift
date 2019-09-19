@@ -27,14 +27,14 @@ class Springboard {
         for index in 0..<icons.count {
             let icon = icons.element(boundBy: index)
             
-            if !(icon.exists && icon.isHittable) {
+            if !(icon.isVisible()) {
                 search(icon, direction: .left, maxSwipes: 5)
             }
-            if !(icon.exists && icon.isHittable) {
+            if !(icon.isVisible()) {
                 search(icon, direction: .right, maxSwipes: 10)
             }
             
-            if icon.exists && icon.isHittable {
+            if icon.isVisible() {
                 // Force delete the app from the springboard
                 let iconFrame = icon.frame
                 let springboardFrame = springboard().frame
@@ -59,7 +59,7 @@ class Springboard {
     
     private class func search(_ element: XCUIElement, direction: SwipeDirection, maxSwipes: Int = 5) {
         var nrOfSwipes = 0
-        while nrOfSwipes < maxSwipes && !(element.exists && element.isHittable) {
+        while nrOfSwipes < maxSwipes && !(element.isVisible()) {
             switch direction {
             case .left: springboard().windows.element(boundBy: 0).swipeLeft()
             default: springboard().windows.element(boundBy: 0).swipeRight()

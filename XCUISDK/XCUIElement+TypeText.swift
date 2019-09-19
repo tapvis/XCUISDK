@@ -13,19 +13,27 @@ func Type(_ text: String, in textField: UIElement, in app: XCUIApplication = App
     performStep("type text \"\(text)\" in \(textField.description)",
         in: app,
         on: textField,
-        switchToNewState: { element in
+        switchToNewState: { textField in
             let keyboard = app.keyboards.element(boundBy: 0)
-            guard keyboard.exists else {
-                XCTFail("""
-                    Cannot type \(text) because there is no keyboard visible on screen.
-                    Check the Simulator's keyboard options in menu:
-                    Hardware -> Keyboard
-                    """)
-                return
+            
+            let typingAction = {
+                text.type(in: app)
+                if let label = returnKeyLabel {
+                    keyboard.buttons[label].tap()
+                }
             }
-            text.type(in: app)
-            if let label = returnKeyLabel {
-                keyboard.buttons[label].tap()
+            if keyboard.isVisible() {
+                typingAction()
+                return
+            } else {
+                // maybe the text field has no focus yet? Try to tap it!
+                textField.tap()
+                if waitForElementToHaveFocus(textField) {
+                    typingAction()
+                    return
+                } else {
+                    failBecauseKeyboardNotVisible(textToType: text)
+                }
             }
     }) {
         asserts?()
@@ -35,16 +43,29 @@ func Type(_ text: String, in textField: UIElement, in app: XCUIApplication = App
 extension String {
     func type(in app: XCUIApplication) {
         let keyboard = app.keyboards.element(boundBy: 0)
-        guard keyboard.exists && keyboard.isHittable else {
-            XCTFail("""
-                    Cannot type \(self) because there is no keyboard visible on screen?
-                    Check the Simulator's keyboard options in menu:
-                    Hardware -> Keyboard
-                    """)
+        guard keyboard.isVisible() else {
+            failBecauseKeyboardNotVisible(textToType: self)
             return
         }
         self.forEach { $0.tap(on: keyboard) }
     }
+}
+
+func failBecauseKeyboardNotVisible(textToType: String) {
+    XCTFail("""
+        Cannot type \"\(textToType)\" because there is no keyboard visible on screen.
+        Check the Simulator's keyboard options in Simulator menu: Hardware -> Keyboard
+        Or reset the Simulator in Simulator menu: Hardware -> Erase All Content and Settings
+    """)
+}
+
+func waitForElementToHaveFocus(_ element: XCUIElement) -> Bool {
+    let p = NSPredicate(format: "exists == true && hasKeyboardFocus == true")
+    let expectation = XCTNSPredicateExpectation(predicate: p,
+                                                object: element)
+    
+    let result = XCTWaiter().wait(for: [expectation], timeout: 5)
+    return result == .completed
 }
 
 typealias Keyboard = XCUIElement
@@ -52,7 +73,7 @@ typealias Keyboard = XCUIElement
 extension Character {
     func tap(on keyboard: Keyboard) {
         //        let character = character == "&" ? "ampersand" : "\(character)"
-        let key = keyboard.keys["\(self)"]
+        let key = keyboard.keys[self.keyboardLabel(for: keyboard)]
         var keyExists = key.exists
         var keyplaneSequence = keyplaneSequnce(toGetTo: self, startingAt: currentKeyplane(for: keyboard))
         while keyExists == false, keyplaneSequence.isEmpty == false {
@@ -64,20 +85,39 @@ extension Character {
                         """)
                 return
             }
-            _ = switchKey.tap(keyboard)
+            _ = switchKey.tap(keyboard, switchKey.switchesTo)
             keyExists = key.exists
         }
         key.tap()
+    }
+    
+    func keyboardLabel(for keyboard: XCUIElement) -> String {
+        switch self {
+        case " " where keyboard.keys["space"].isVisible():
+            return "space"
+        case " " where keyboard.keys["Leerzeichen"].isVisible():
+            return "Leerzeichen"
+        case "&": return "ampersand"
+        default: return "\(self)"
+        }
     }
 }
 
 private struct Keyplane: Equatable, CustomStringConvertible {
     enum Style: Hashable {
         case letter, numeric, symbols
+        
+        func switchButtonId() -> String {
+            switch self {
+            case .letter: return "shift"
+            case .numeric: return "more"
+            case .symbols: return "shift"
+            }
+        }
     }
     struct SwitchKey {
         let switchesTo: Keyplane.Style
-        let tap: (_ keyboard: Keyboard)->()
+        let tap: (_ keyboard: Keyboard, _ switchTo: Keyplane.Style)->()
     }
     let style: Keyplane.Style
     let switchKeys: [SwitchKey]
@@ -91,27 +131,27 @@ private struct Keyplane: Equatable, CustomStringConvertible {
 
 private let keyplanes: [Keyplane] = [
     Keyplane(style: .letter, switchKeys: [
-        Keyplane.SwitchKey(switchesTo: .letter, tap: { (keyboard) in
-            keyboard.buttons["shift"].tap()
+        Keyplane.SwitchKey(switchesTo: .letter, tap: { (keyboard, switchTo) in
+            keyboard.buttons[switchTo.switchButtonId()].tap()
         }),
-        Keyplane.SwitchKey(switchesTo: .numeric, tap: { (keyboard) in
-            keyboard.keys["more, numbers"].tap()
+        Keyplane.SwitchKey(switchesTo: .numeric, tap: { (keyboard, switchTo) in
+            keyboard.keys[switchTo.switchButtonId()].tap()
         })
         ]),
     Keyplane(style: .numeric, switchKeys: [
-        Keyplane.SwitchKey(switchesTo: .letter, tap: { (keyboard) in
-            keyboard.keys["more, letters"].tap()
+        Keyplane.SwitchKey(switchesTo: .letter, tap: { (keyboard, switchTo) in
+            keyboard.keys[switchTo.switchButtonId()].tap()
         }),
-        Keyplane.SwitchKey(switchesTo: .symbols, tap: { (keyboard) in
-            keyboard.buttons["more, symbols"].tap()
+        Keyplane.SwitchKey(switchesTo: .symbols, tap: { (keyboard, switchTo) in
+            keyboard.buttons[switchTo.switchButtonId()].tap()
         })
         ]),
     Keyplane(style: .symbols, switchKeys: [
-        Keyplane.SwitchKey(switchesTo: .letter, tap: { (keyboard) in
-            keyboard.keys["more, letters"].tap()
+        Keyplane.SwitchKey(switchesTo: .letter, tap: { (keyboard, switchTo) in
+            keyboard.keys[switchTo.switchButtonId()].tap()
         }),
-        Keyplane.SwitchKey(switchesTo: .numeric, tap: { (keyboard) in
-            keyboard.buttons["more, numbers"].tap()
+        Keyplane.SwitchKey(switchesTo: .numeric, tap: { (keyboard, switchTo) in
+            keyboard.buttons[switchTo.switchButtonId()].tap()
         })
         ])
 ]

@@ -81,7 +81,7 @@ struct Swiping: NavigationStrategy {
         switch containerElement.elementType {
         case .table, .collectionView:
             if let lastCell = containerElement.cells.allElementsBoundByIndex.last {
-                return lastCell.exists && lastCell.isHittable
+                return lastCell.isVisible()
             } else {
                 return false
             }
@@ -96,7 +96,7 @@ struct Swiping: NavigationStrategy {
         switch containerElement.elementType {
         case .table, .collectionView:
             if let lastCell = containerElement.cells.allElementsBoundByIndex.first {
-                return lastCell.exists && lastCell.isHittable
+                return lastCell.isVisible()
             } else {
                 return false
             }
