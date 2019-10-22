@@ -34,7 +34,9 @@ struct Cell: UIElement {
         self.labels = _labels
     }
     var identity: Identity {
-        return Identity(.cell, path: Identity.Path(query: App().cells.labeled(with: labels), index: 0))
+        return Identity(.cell,
+                        labels: labels,
+                        path: Identity.Path(query: App().cells.labeled(with: labels), index: 0))
     }
 }
 

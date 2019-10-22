@@ -89,7 +89,10 @@ let kWaitForElementExistenceTimeoutSec: TimeInterval = 0
 extension UIElement {
     
     var description: String {
-        return String(describing: type(of: self))
+        return String(describing: type(of: self)) +
+               " '" +
+               (self.identity.labels?.joined(separator: ",") ?? "") +
+               "'"
     }
     
     var scrollContainer: UIElement {
