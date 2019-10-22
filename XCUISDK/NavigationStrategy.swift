@@ -53,54 +53,23 @@ struct Swiping: NavigationStrategy {
     }
     
     func apply(uiElementInteraction: () -> NavigationCommand) {
+        guard let containerElement = containerElement else {
+            return
+        }
+        var switchedToNewState = true
         var timesSwiped = 0
-        while shouldStop() == false,  timesSwiped < times {
+        var previousScreenshot = containerElement.screenshot().image
+        while switchedToNewState == true,  timesSwiped < times {
             Swipe(direction, distance, on: container)
+            let currentScreenshot = containerElement.screenshot().image
+            switchedToNewState = previousScreenshot.pngData() != currentScreenshot.pngData()
+            previousScreenshot = currentScreenshot
             timesSwiped = timesSwiped + 1
             let command = uiElementInteraction()
             switch command {
             case .stop: return
             case .continue: continue
             }
-        }
-    }
-    
-    private func shouldStop() -> Bool {
-        switch direction {
-        case .up:    return isAtBottomOf(container)
-        case .down:  return isAtTopOf(container)
-        case .left:  return isAtBottomOf(container)
-        case .right: return isAtTopOf(container)
-        }
-    }
-    
-    private func isAtBottomOf(_ container: UIElement) -> Bool {
-        guard let containerElement = self.containerElement else {
-            return false
-        }
-        switch containerElement.elementType {
-        case .table, .collectionView:
-            if let lastCell = containerElement.cells.allElementsBoundByIndex.last {
-                return lastCell.isVisible()
-            } else {
-                return false
-            }
-        default: return false
-        }
-    }
-    
-    private func isAtTopOf(_ container: UIElement) -> Bool {
-        guard let containerElement = container.locate(in: App()) else {
-            return false
-        }
-        switch containerElement.elementType {
-        case .table, .collectionView:
-            if let lastCell = containerElement.cells.allElementsBoundByIndex.first {
-                return lastCell.isVisible()
-            } else {
-                return false
-            }
-        default: return false
         }
     }
 }
