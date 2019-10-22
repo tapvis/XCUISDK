@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B01F0F10235EEA7D00ACF312 /* XCUISDKUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01F0F0F235EEA7D00ACF312 /* XCUISDKUITests.swift */; };
 		B0B8CABF2302F2F100CA117E /* XCUISDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0B8CAB52302F2F100CA117E /* XCUISDK.framework */; };
 		B0B8CAC42302F2F100CA117E /* XCUISDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B8CAC32302F2F100CA117E /* XCUISDKTests.swift */; };
 		B0B8CAC62302F2F100CA117E /* XCUISDK.h in Headers */ = {isa = PBXBuildFile; fileRef = B0B8CAB82302F2F100CA117E /* XCUISDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -21,6 +22,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B01F0F15235EED0C00ACF312 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B0B8CAAC2302F2F100CA117E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B0B8CAB42302F2F100CA117E;
+			remoteInfo = XCUISDK;
+		};
 		B0B8CAC02302F2F100CA117E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B0B8CAAC2302F2F100CA117E /* Project object */;
@@ -31,6 +39,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B01F0F0D235EEA7D00ACF312 /* XCUISDKUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XCUISDKUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B01F0F0F235EEA7D00ACF312 /* XCUISDKUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCUISDKUITests.swift; sourceTree = "<group>"; };
+		B01F0F11235EEA7D00ACF312 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B0B8CAB52302F2F100CA117E /* XCUISDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XCUISDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0B8CAB82302F2F100CA117E /* XCUISDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCUISDK.h; sourceTree = "<group>"; };
 		B0B8CAB92302F2F100CA117E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -49,6 +60,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B01F0F0A235EEA7D00ACF312 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0B8CAB22302F2F100CA117E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -68,11 +86,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B01F0F0E235EEA7D00ACF312 /* XCUISDKUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B01F0F0F235EEA7D00ACF312 /* XCUISDKUITests.swift */,
+				B01F0F11235EEA7D00ACF312 /* Info.plist */,
+			);
+			path = XCUISDKUITests;
+			sourceTree = "<group>";
+		};
 		B0B8CAAB2302F2F100CA117E = {
 			isa = PBXGroup;
 			children = (
 				B0B8CAB72302F2F100CA117E /* XCUISDK */,
 				B0B8CAC22302F2F100CA117E /* XCUISDKTests */,
+				B01F0F0E235EEA7D00ACF312 /* XCUISDKUITests */,
 				B0B8CAB62302F2F100CA117E /* Products */,
 				B0B8CAD92302F32700CA117E /* Frameworks */,
 			);
@@ -83,6 +111,7 @@
 			children = (
 				B0B8CAB52302F2F100CA117E /* XCUISDK.framework */,
 				B0B8CABE2302F2F100CA117E /* XCUISDKTests.xctest */,
+				B01F0F0D235EEA7D00ACF312 /* XCUISDKUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,6 +164,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		B01F0F0C235EEA7D00ACF312 /* XCUISDKUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B01F0F14235EEA7D00ACF312 /* Build configuration list for PBXNativeTarget "XCUISDKUITests" */;
+			buildPhases = (
+				B01F0F09235EEA7D00ACF312 /* Sources */,
+				B01F0F0A235EEA7D00ACF312 /* Frameworks */,
+				B01F0F0B235EEA7D00ACF312 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B01F0F16235EED0C00ACF312 /* PBXTargetDependency */,
+			);
+			name = XCUISDKUITests;
+			productName = XCUISDKUITests;
+			productReference = B01F0F0D235EEA7D00ACF312 /* XCUISDKUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		B0B8CAB42302F2F100CA117E /* XCUISDK */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B0B8CAC92302F2F100CA117E /* Build configuration list for PBXNativeTarget "XCUISDK" */;
@@ -177,10 +224,13 @@
 		B0B8CAAC2302F2F100CA117E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1030;
+				LastSwiftUpdateCheck = 1100;
 				LastUpgradeCheck = 1030;
 				ORGANIZATIONNAME = Quantosparks;
 				TargetAttributes = {
+					B01F0F0C235EEA7D00ACF312 = {
+						CreatedOnToolsVersion = 11.0;
+					};
 					B0B8CAB42302F2F100CA117E = {
 						CreatedOnToolsVersion = 10.3;
 						LastSwiftMigration = 1030;
@@ -204,11 +254,19 @@
 			targets = (
 				B0B8CAB42302F2F100CA117E /* XCUISDK */,
 				B0B8CABD2302F2F100CA117E /* XCUISDKTests */,
+				B01F0F0C235EEA7D00ACF312 /* XCUISDKUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B01F0F0B235EEA7D00ACF312 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0B8CAB32302F2F100CA117E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -226,6 +284,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B01F0F09235EEA7D00ACF312 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B01F0F10235EEA7D00ACF312 /* XCUISDKUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B0B8CAB12302F2F100CA117E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -251,6 +317,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B01F0F16235EED0C00ACF312 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B0B8CAB42302F2F100CA117E /* XCUISDK */;
+			targetProxy = B01F0F15235EED0C00ACF312 /* PBXContainerItemProxy */;
+		};
 		B0B8CAC12302F2F100CA117E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B0B8CAB42302F2F100CA117E /* XCUISDK */;
@@ -259,6 +330,49 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		B01F0F12235EEA7D00ACF312 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6J94YX4TLA;
+				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCT_DIR)";
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(BUILT_PRODUCT_DIR)";
+				INFOPLIST_FILE = XCUISDKUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.quantosparks.XCUISDKUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B01F0F13235EEA7D00ACF312 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6J94YX4TLA;
+				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCT_DIR)";
+				INFOPLIST_FILE = XCUISDKUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.quantosparks.XCUISDKUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		B0B8CAC72302F2F100CA117E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -396,6 +510,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
 				INFOPLIST_FILE = XCUISDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -425,6 +540,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(PLATFORM_DIR)/Developer/Library/Frameworks";
 				INFOPLIST_FILE = XCUISDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -479,6 +595,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B01F0F14235EEA7D00ACF312 /* Build configuration list for PBXNativeTarget "XCUISDKUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B01F0F12235EEA7D00ACF312 /* Debug */,
+				B01F0F13235EEA7D00ACF312 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B0B8CAAF2302F2F100CA117E /* Build configuration list for PBXProject "XCUISDK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
